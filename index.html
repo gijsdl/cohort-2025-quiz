@@ -13,9 +13,9 @@
         </header>
         <main>
             <section id="question-number">
-                <p class="number done correct">1</p>
-                <p class="number done incorrect">2</p>
-                <p class="number busy">3</p>
+                <p class="number">1</p>
+                <p class="number">2</p>
+                <p class="number">3</p>
                 <p class="number">4</p>
                 <p class="number">5</p>
                 <p class="number">6</p>
@@ -24,7 +24,7 @@
                 <p class="number">9</p>
                 <p class="number">10</p>
             </section>
-            <section id="quiz">
+            <section class="quiz">
                 <h2 id="question">&lt;Vraag&gt;</h2>
                 <div id="answers">
                     <button class="answer">&lt;Antwoord 1&gt;</button>
@@ -32,6 +32,11 @@
                     <button class="answer">&lt;Antwoord 3&gt;</button>
                     <button class="answer">&lt;Antwoord 4&gt;</button>
                 </div>
+            </section>
+            <section class="end-screen hidden">
+                <h2 class="end-text">Je hebt gewonnen. Je hebt 6 / 10 vragen goed</h2>
+                <img class="end-img" src="img/losing.jpg" alt="gewonnen">
+                <button class="reset">Opnieuw</button>
             </section>
         </main>
         <footer>
