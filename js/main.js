@@ -174,7 +174,7 @@ function nextQuestion() {
     answerElements[1].textContent = answerB[index];
     answerElements[2].textContent = answerC[index];
     answerElements[3].textContent = answerD[index];
-    questionNumberElements[questionIndex].classList.add('busy')
+    questionNumberElements[questionIndex].classList.add('busy');
 }
 
 function answer(answer) {
