@@ -151,9 +151,9 @@ function setup() {
             answer(i);
         })
     }
-    for (let i  = 0; i < questionNumberElements.length; i++){
+    for (let i = 0; i < questionNumberElements.length; i++) {
         const numberElement = questionNumberElements[i];
-        numberElement.addEventListener('click', () =>{
+        numberElement.addEventListener('click', () => {
             questionIndex = i;
             nextQuestion(questionsArray[i]);
         })
@@ -186,8 +186,7 @@ function next() {
         questionIndex++;
         const index = questionsArray[questionIndex];
         nextQuestion(index);
-    }
-    else {
+    } else {
         endQuiz();
     }
 }
@@ -223,7 +222,7 @@ function removeSelected() {
     }
 }
 
-function removeBusy(){
+function removeBusy() {
     for (let i = 0; i < questionNumberElements.length; i++) {
         questionNumberElements[i].classList.remove('busy')
     }
@@ -231,9 +230,9 @@ function removeBusy(){
 
 function endQuiz() {
     let answerFilled = true;
-    if (guessedAnswers.length !== 10){
-        answerFilled =false;
-    }else {
+    if (guessedAnswers.length !== 10) {
+        answerFilled = false;
+    } else {
         for (let i = 0; i < guessedAnswers.length; i++) {
             if (guessedAnswers[i] === undefined) {
                 answerFilled = false;
@@ -245,10 +244,10 @@ function endQuiz() {
         for (let i = 0; i < guessedAnswers.length; i++) {
             questionNumberElements[i].classList.remove('busy');
             questionNumberElements[i].classList.remove('done');
-            if (guessedAnswers[i] === correctAnswer[questionsArray[i]]){
+            if (guessedAnswers[i] === correctAnswer[questionsArray[i]]) {
                 correctQuestions++;
                 questionNumberElements[i].classList.add('correct');
-            }else {
+            } else {
                 questionNumberElements[i].classList.add('incorrect');
             }
         }
@@ -268,7 +267,7 @@ function endQuiz() {
     }
 }
 
-function goBack(){
+function goBack() {
     notAnsweredElement.classList.add('hidden');
 }
 
@@ -276,6 +275,7 @@ function reset() {
     quizElement.classList.remove('hidden');
     endScreenElement.classList.add('hidden');
     questionsArray = [];
+    guessedAnswers = [];
     questionIndex = 0;
     lastQuestion = false;
     for (let i = 0; i < questionNumberElements.length; i++) {
