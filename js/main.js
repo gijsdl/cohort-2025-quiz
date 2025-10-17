@@ -4,6 +4,9 @@ const quizElement = document.querySelector('.quiz');
 const questionNumberElements = document.querySelectorAll('.number');
 const questionElement = document.querySelector('#question');
 const answerElements = document.querySelectorAll('.answer');
+const nextElement = document.querySelector('.next');
+const notAnsweredElement = document.querySelector('.not-answered');
+const backElement = document.querySelector('.back');
 const endScreenElement = document.querySelector('.end-screen');
 const endScreenTextElement = document.querySelector('.end-text');
 const endScreenImgElement = document.querySelector('.end-img');
@@ -11,6 +14,10 @@ const resetElement = document.querySelector('.reset');
 
 let questionIndex = 0;
 let correctQuestions = 0;
+let lastQuestion = false;
+
+let questionsArray = [];
+let guessedAnswers = [];
 
 const questions = [
     "Waarvoor gebruik je HTML?",
@@ -134,8 +141,6 @@ const correctAnswer = [
     0, 3, 1, 2, 1
 ];
 
-let questionsArray = [];
-
 setup();
 
 function setup() {
@@ -146,8 +151,17 @@ function setup() {
             answer(i);
         })
     }
+    for (let i  = 0; i < questionNumberElements.length; i++){
+        const numberElement = questionNumberElements[i];
+        numberElement.addEventListener('click', () =>{
+            questionIndex = i;
+            nextQuestion(questionsArray[i]);
+        })
+    }
+    nextElement.addEventListener('click', next);
+    backElement.addEventListener('click', goBack);
     resetElement.addEventListener('click', reset);
-    nextQuestion();
+    nextQuestion(questionsArray[questionIndex]);
 }
 
 function createQuestionOrder() {
@@ -167,52 +181,103 @@ function shuffleArray(array) {
     }
 }
 
-function nextQuestion() {
-    const index = questionsArray[questionIndex];
+function next() {
+    if (!lastQuestion) {
+        questionIndex++;
+        const index = questionsArray[questionIndex];
+        nextQuestion(index);
+    }
+    else {
+        endQuiz();
+    }
+}
+
+function nextQuestion(index) {
+    removeSelected();
+    removeBusy();
     questionElement.textContent = questions[index];
     answerElements[0].textContent = answerA[index];
     answerElements[1].textContent = answerB[index];
     answerElements[2].textContent = answerC[index];
     answerElements[3].textContent = answerD[index];
     questionNumberElements[questionIndex].classList.add('busy');
+    if (questionIndex >= 9) {
+        lastQuestion = true;
+        nextElement.innerHTML = "Inleveren";
+    } else {
+        lastQuestion = false;
+        nextElement.innerHTML = "Volgende vraag";
+    }
 }
 
 function answer(answer) {
-    const questionElement = questionNumberElements[questionIndex];
-    if (answer === correctAnswer[questionsArray[questionIndex]]) {
-        questionElement.classList.add('correct');
-        correctQuestions++;
+    guessedAnswers[questionIndex] = answer;
+    removeSelected();
+    answerElements[answer].classList.add('selected');
+    questionNumberElements[questionIndex].classList.add('done');
+}
+
+function removeSelected() {
+    for (let i = 0; i < answerElements.length; i++) {
+        answerElements[i].classList.remove('selected');
+    }
+}
+
+function removeBusy(){
+    for (let i = 0; i < questionNumberElements.length; i++) {
+        questionNumberElements[i].classList.remove('busy')
+    }
+}
+
+function endQuiz() {
+    let answerFilled = true;
+    if (guessedAnswers.length !== 10){
+        answerFilled =false;
+    }else {
+        for (let i = 0; i < guessedAnswers.length; i++) {
+            if (guessedAnswers[i] === undefined) {
+                answerFilled = false;
+                break;
+            }
+        }
+    }
+    if (answerFilled) {
+        for (let i = 0; i < guessedAnswers.length; i++) {
+            questionNumberElements[i].classList.remove('busy');
+            questionNumberElements[i].classList.remove('done');
+            if (guessedAnswers[i] === correctAnswer[questionsArray[i]]){
+                correctQuestions++;
+                questionNumberElements[i].classList.add('correct');
+            }else {
+                questionNumberElements[i].classList.add('incorrect');
+            }
+        }
+        quizElement.classList.add('hidden');
+        if (correctQuestions > 5) {
+            endScreenTextElement.textContent = `Je hebt gewonnen. Je hebt ${correctQuestions} van de 10 goed`;
+            endScreenImgElement.src = 'img/winning.jpg';
+            endScreenImgElement.alt = 'gewonnen';
+        } else {
+            endScreenTextElement.textContent = `Je hebt verloren. Je hebt ${correctQuestions} van de 10 goed`;
+            endScreenImgElement.src = 'img/losing.jpg';
+            endScreenImgElement.alt = 'verloren';
+        }
+        endScreenElement.classList.remove('hidden');
     } else {
-        questionElement.classList.add('incorrect');
-    }
-    questionElement.classList.remove('busy');
-    questionIndex++;
-    if (questionIndex >= questionsArray.length){
-        endQuiz();
-    }else {
-        nextQuestion();
+        notAnsweredElement.classList.remove('hidden');
     }
 }
 
-function endQuiz(){
-    quizElement.classList.add('hidden');
-    if (correctQuestions > 5){
-        endScreenTextElement.textContent = `Je hebt gewonnen. Je hebt ${correctQuestions} van de 10 goed`;
-        endScreenImgElement.src = 'img/winning.jpg';
-        endScreenImgElement.alt = 'gewonnen';
-    }else {
-        endScreenTextElement.textContent = `Je hebt verloren. Je hebt ${correctQuestions} van de 10 goed`;
-        endScreenImgElement.src = 'img/losing.jpg';
-        endScreenImgElement.alt = 'verloren';
-    }
-    endScreenElement.classList.remove('hidden');
+function goBack(){
+    notAnsweredElement.classList.add('hidden');
 }
 
-function reset(){
+function reset() {
     quizElement.classList.remove('hidden');
     endScreenElement.classList.add('hidden');
     questionsArray = [];
     questionIndex = 0;
+    lastQuestion = false;
     for (let i = 0; i < questionNumberElements.length; i++) {
         const element = questionNumberElements[i];
         element.classList.remove('correct');
@@ -220,5 +285,5 @@ function reset(){
     }
     correctQuestions = 0;
     createQuestionOrder();
-    nextQuestion();
+    nextQuestion(questionsArray[questionIndex]);
 }
